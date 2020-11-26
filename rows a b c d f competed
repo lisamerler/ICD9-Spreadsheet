@@ -69,7 +69,7 @@ while i < numberOfRowsICD_10MappingsWorkBook:
         e = ICD_10MappingsPathWorkSheet.cell(row=i, column=6)
         icd_9UpdateForRMA2006PathWorkSheet['C' + str(j)] = e.value
 
-        icd_9UpdateForRMA2006WorkBook.save(str(destinationFileName))
+        #icd_9UpdateForRMA2006WorkBook.save(str(destinationFileName))
 
         c = ICD_10MappingsPathWorkSheet.cell(row=i, column=8)
         valueInTestCellA = icd_9UpdateForRMA2006PathWorkSheet['H' + str(j)] = c.value
@@ -125,7 +125,7 @@ while i < numberOfRowsICD_10MappingsWorkBook:
         e = ICD_10MappingsPathWorkSheet.cell(row=i, column=6)
         icd_9UpdateForRMA2006PathWorkSheet.cell(row=j, column=3).value = e.value
 
-        icd_9UpdateForRMA2006WorkBook.save(str(destinationFileName))
+       # icd_9UpdateForRMA2006WorkBook.save(str(destinationFileName))
 
         c = ICD_10MappingsPathWorkSheet.cell(row=i, column=8)
         valueInTestCellA = ICD_10MappingsPathWorkSheet['H' + str(j)] = c.value
