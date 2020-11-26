@@ -1,0 +1,15 @@
+comparisonCell1 = str(ICD_10MappingsPathWorkSheet.cell(row=i, column=9).value)
+
+
+        if comparisonCell1.lower() == "yes":
+            cellA = icd_9UpdateForRMA2006PathWorkSheet.cell(row=i, column=4)
+            cellA.value = '10/1/2020'
+            cellB = icd_9UpdateForRMA2006PathWorkSheet.cell(row=j, column=5)
+            cellB.value = '9/31/2021'
+
+        comparisonCell2 = str(ICD_10MappingsPathWorkSheet.cell(row=i, column=10).value)
+        if comparisonCell2.lower() == "yes":
+            cellA = icd_9UpdateForRMA2006PathWorkSheet.cell(row=, column=6)
+            cellA.value = '10/1/2020'
+            cellB = icd_9UpdateForRMA2006PathWorkSheet.cell(row=j, column=7)
+            cellB.value = '9/31/2021'
