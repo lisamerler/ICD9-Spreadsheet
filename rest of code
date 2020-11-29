@@ -1,0 +1,87 @@
+            if (u == c.internalValue):
+
+                print("in for")
+                d = ICD_10MappingsPathWorkSheet.cell(row=i, column=4)
+                icd_9UpdateForRMA2006PathWorkSheet['B' + str(j)] = d.value
+                e = ICD_10MappingsPathWorkSheet.cell(row=i, column=6)
+                icd_9UpdateForRMA2006PathWorkSheet['C' + str(j)] = e.value
+
+                comparisonCell1 = str(ICD_10MappingsPathWorkSheet.cell(row=i, column=8).value)
+                if comparisonCell1.lower() == "yes":
+                    cellA = icd_9UpdateForRMA2006PathWorkSheet.cell(row=j, column=4)
+                    cellA.value = '10/1/2020'
+                    cellB = icd_9UpdateForRMA2006PathWorkSheet.cell(row=j, column=5)
+                    cellB.value = '9/31/2021'
+
+                comparisonCell2 = str(ICD_10MappingsPathWorkSheet.cell(row=i, column=9).value)
+                if comparisonCell2.lower() == "yes":
+                    cellA = icd_9UpdateForRMA2006PathWorkSheet.cell(row=j, column=6)
+                    cellA.value = '10/1/2020'
+                    cellB = icd_9UpdateForRMA2006PathWorkSheet.cell(row=j, column=7)
+                    cellB.value = '9/31/2021'
+
+                j = j + 1
+
+                c1 = ICD_10MappingsPathWorkSheet.cell(row=i, column=1)
+                p = icd_9UpdateForRMA2006PathWorkSheet['A' + str(j)] = c1.value
+
+        #if p == add[addCount] and addCount < len(add):
+            #addedValues.append(p)
+       # elif deleteCount < len(delete):
+        #    deletedValues.append(p)
+
+                s = ICD_10MappingsPathWorkSheet.cell(row=i, column=5)
+                icd_9UpdateForRMA2006PathWorkSheet['B' + str(j)] = s.value
+
+        # icd_9UpdateForRMA2006PathWorkSheet.cell(row=j, column=2).value = s.value
+
+                r = ICD_10MappingsPathWorkSheet.cell(row=i, column=6)
+                icd_9UpdateForRMA2006PathWorkSheet['C' + str(j)] = r.value
+
+                comparisonCell4 = str(ICD_10MappingsPathWorkSheet.cell(row=i, column=8).value)
+                if comparisonCell4.lower() == "yes":
+                    cellA = icd_9UpdateForRMA2006PathWorkSheet.cell(row=j, column=4)
+                    cellA.value = '10/1/2020'
+                    cellB = icd_9UpdateForRMA2006PathWorkSheet.cell(row=j, column=5)
+                    cellB.value = '9/31/2021'
+
+                comparisonCell5 = str(ICD_10MappingsPathWorkSheet.cell(row=i, column=9).value)
+                if comparisonCell5.lower() == "yes":
+                    cellA = icd_9UpdateForRMA2006PathWorkSheet.cell(row=j, column=6)
+                    cellA.value = '10/1/2020'
+                    cellB = icd_9UpdateForRMA2006PathWorkSheet.cell(row=j, column=7)
+                    cellB.value = '9/31/2021'
+
+                else:
+                    h = ICD_10MappingsPathWorkSheet.cell(row=i, column=1)
+                    p = icd_9UpdateForRMA2006PathWorkSheet.cell(row=j, column=1).value = h.value
+
+                    k = ICD_10MappingsPathWorkSheet.cell(row=i, column=1)
+                    icd_9UpdateForRMA2006PathWorkSheet.cell(row=j, column=1).value = k.value
+
+                    d = ICD_10MappingsPathWorkSheet.cell(row=i, column=5)
+                    icd_9UpdateForRMA2006PathWorkSheet.cell(row=j, column=2).value = d.value
+
+                    e = ICD_10MappingsPathWorkSheet.cell(row=i, column=6)
+                    icd_9UpdateForRMA2006PathWorkSheet.cell(row=j, column=3).value = e.value
+
+                    comparisonCell1 = str(ICD_10MappingsPathWorkSheet.cell(row=i, column=8).value)
+                    if comparisonCell1.lower() == "yes":
+                        cellA = icd_9UpdateForRMA2006PathWorkSheet.cell(row=j, column=4)
+                        cellA.value = '10/1/2020'
+                        cellB = icd_9UpdateForRMA2006PathWorkSheet.cell(row=j, column=5)
+                        cellB.value = '9/31/2021'
+
+                    comparisonCell1 = str(ICD_10MappingsPathWorkSheet.cell(row=i, column=9).value)
+                    if comparisonCell1.lower() == "yes":
+                        cellA = icd_9UpdateForRMA2006PathWorkSheet.cell(row=j, column=6)
+                        cellA.value = '10/1/2020'
+                        cellB = icd_9UpdateForRMA2006PathWorkSheet.cell(row=j, column=7)
+                        cellB.value = '9/31/2021'
+
+                    addedValues.append(c.internal_value)
+
+
+            print("addedValues in while: ", addedValues)
+            print("in while")
+        #deleteCount = deleteCount + 1
