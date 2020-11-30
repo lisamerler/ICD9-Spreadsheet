@@ -1,0 +1,156 @@
+import openpyxl
+import pandas as pd
+
+# Opening the source excel files
+
+ICD_10_SourceFileName = 'C:\\Users\\Mary\\Documents\\ICD9\\New Stuff\\ICD_10_Simple.xlsx'
+ICD_10MappingsWorkBook = openpyxl.load_workbook(ICD_10_SourceFileName)
+ICD_10MappingsPathWorkSheet = ICD_10MappingsWorkBook.worksheets[0]
+
+ICD_9_SourceFileName = 'C:\\Users\\Mary\\Documents\\ICD9\\New Stuff\\ICD_9_Simple.xlsx'
+ICD9_original = openpyxl.load_workbook(ICD_9_SourceFileName)
+ICD9OriginalSheet = ICD9_original.worksheets[0]
+
+# sourceFileName2 = 'C:\\Users\\Mary\\Documents\\ICD9\\2021 Midyear Updates RMA2006.xlsx'
+# ICD_10MappingsWorkBook = openpyxl.load_workbook(sourceFileName2)
+# ICD_10MappingsPathWorkSheet = ICD_10MappingsWorkBook.worksheets[0]
+
+# Opening the destination excel file
+
+addedValuesFileName = 'C:\\Users\\Mary\\Documents\\ICD9\\New Stuff\\add2.xlsx'
+addedValuesWorkbook = openpyxl.load_workbook(ICD_10_SourceFileName)
+addedValuesWorkSheet = addedValuesWorkbook.active
+
+deletedValuesFileName = 'C:\\Users\\Mary\\Documents\\ICD9\\New Stuff\\delete2.xlsx'
+deletedValuesWorkBook = openpyxl.load_workbook(ICD_9_SourceFileName)
+deletedValuesWorkSheet = deletedValuesWorkBook.active
+
+testFileName = 'C:\\Users\\Mary\\Documents\\ICD9\\Test.xlsx'
+TestWorkBook = openpyxl.load_workbook(testFileName)
+testWorkSheet = TestWorkBook.active
+
+# calculate total number of rows and columns in source excel file
+numberOfRowsICD_10MappingsWorkBook = ICD_10MappingsPathWorkSheet.max_row
+numberOfColumnsICD_10MappingsWorkBook = ICD_10MappingsPathWorkSheet.max_column
+numberOfRowsICD9_original = ICD9OriginalSheet.max_row
+
+# Reading two Excel Sheets
+
+
+ICD_10 = []
+i = 2
+
+while i <= numberOfRowsICD_10MappingsWorkBook:
+    c = ICD_10MappingsPathWorkSheet.cell(row=i, column=1)
+    ICD_10.append(c.internal_value)
+    i = i + 1
+
+
+ICD_10.sort()
+print(ICD_10)
+
+print("ICD_10 " , ICD_10)
+
+ICD_9 = []
+i = 2
+
+while i <= numberOfRowsICD9_original:
+    c = ICD9OriginalSheet.cell(row=i, column=1)
+    ICD_9.append(c.internal_value)
+    i = i + 1
+
+
+ICD_9.sort()
+
+
+def isInList(value, array):
+    for i in array:
+        if i == value:
+            return True
+    return False
+
+add = []
+
+for i in ICD_10:
+    if isInList(i, ICD_9):
+        print()
+        #print("i in if 1 ", i)
+    else:
+        add.append(i)
+        print()
+        #print("add in else 1 ", add)
+
+delete = []
+
+for i in ICD_9:
+    if isInList(i, ICD_10):
+        print()
+        #print("i in if 2 ", i)
+    else:
+        delete.append(i)
+        #print("add in else 2 ", add)
+        #print("delete ", delete)
+
+
+i = 1
+j = 1
+s = 2
+pp = 2
+
+addedValues = []
+deletedValues = []
+while i < numberOfRowsICD_10MappingsWorkBook:
+    i = i + 1
+    j = j + 1
+
+    # icd_9UpdateForRMA2006PathWorkSheet.cell(row=i, column=1).value = c.value  # + '_10'
+
+    c1 = ICD_10MappingsPathWorkSheet.cell(row=i, column=4)
+    d = ICD_10MappingsPathWorkSheet.cell(row=i, column=5)
+
+
+    if c1.value != d.value:
+        c = ICD_10MappingsPathWorkSheet.cell(row=i, column=1)
+        oo = ICD_10MappingsPathWorkSheet.cell(row=i, column=4)
+        print(oo.internal_value)
+        #p = icd_9UpdateForRMA2006PathWorkSheet['A' + str(i)] = c.value
+
+        for u in add:
+            if u == c.internal_value:
+                addedValuesWorkSheet['A' + str(s)] = c.internal_value
+                addedValuesWorkSheet['B' + str(s)] = oo.internal_value
+                addedValues.append(u)
+                s = s + 1
+        for u in delete:
+           if u == c.internal_value:
+                deletedValuesWorkSheet['A' + str(pp)] = c.internal_value
+                deletedValuesWorkSheet['B' + str(pp)] = oo.internal_value
+                deletedValues.append(u)
+                pp = pp + 1
+    else:
+        c = ICD_10MappingsPathWorkSheet.cell(row=i, column=1)
+        oo = ICD_10MappingsPathWorkSheet.cell(row=i, column=4)
+        
+        for u in add:
+            if u == c.internal_value:
+                addedValuesWorkSheet['A' + str(s)] = c.internal_value
+                addedValuesWorkSheet['B' + str(s)] = oo.internal_value
+                addedValues.append(u)
+                s = s + 1
+        for u in delete:
+            if u == c.internal_value:
+                deletedValuesWorkSheet['A' + str(pp)] = c.internal_value
+                deletedValuesWorkSheet['B' + str(pp)] = oo.internal_value
+                deletedValues.append(u)
+                pp = pp + 1
+
+print("add ", add)
+print("added: ", addedValues)
+print("delete ", delete)
+print("deleted: ", deletedValues)
+
+addedValuesWorkbook.save(str(addedValuesFileName))
+deletedValuesWorkBook.save(str(deletedValuesFileName))
+
+
+print('done with first part')
