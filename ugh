@@ -1,0 +1,27 @@
+C:\Users\Mary\PycharmProjects\testproject\venv\Scripts\python.exe C:/Users/Mary/PycharmProjects/testproject/main.py
+False
+False
+False
+False
+False
+False
+False
+False
+False
+done with first part
+done with first part
+done
+                   ICD-9     HCC  ...  AdditionalCC_End CommercialHCC
+0          in original a  same D  ...               NaN           0.0
+1          in original b  same D  ...               NaN           0.0
+2          in original c  same D  ...               NaN           0.0
+3  in original and new a  same D  ...               NaN           0.0
+4  in original and new b  same D  ...               NaN           0.0
+5  in original and new c  same D  ...               NaN           0.0
+6               in new a  same D  ...               NaN           0.0
+7               in new b  same D  ...               NaN           0.0
+8               in new c  same D  ...               NaN           NaN
+
+[9 rows x 18 columns]
+
+Process finished with exit code 0
