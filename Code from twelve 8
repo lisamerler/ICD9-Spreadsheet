@@ -1,0 +1,159 @@
+import openpyxl
+import pandas as pd
+import numpy as np
+
+# Opening the source excel files
+
+sourceFileName = 'C:\\Users\\Mary\\Documents\\ICD_9 With Real Data trimmed\\Original Files\\New 2021 Midyear_Final ICD-10-CM.xlsx'
+ICD_10MappingsWorkBook = openpyxl.load_workbook(sourceFileName)
+ICD_10MappingsPathWorkSheet = ICD_10MappingsWorkBook.worksheets[0]
+
+# sourceFileName2 = 'C:\\Users\\Mary\\Documents\\ICD9\\2021 Midyear Updates RMA2006.xlsx'
+# ICD_10MappingsWorkBook = openpyxl.load_workbook(sourceFileName2)
+# ICD_10MappingsPathWorkSheet = ICD_10MappingsWorkBook.worksheets[0]
+
+# Opening the destination excel file
+
+destinationFileName = 'C:\\Users\\Mary\\Documents\\ICD_9 With Real Data trimmed\\Original Files\\ICD_9 New Spreadsheet.xlsx'
+icd_9UpdateForRMA2006WorkBook = openpyxl.load_workbook(destinationFileName)
+icd_9UpdateForRMA2006PathWorkSheet = icd_9UpdateForRMA2006WorkBook.active
+
+# calculate total number of rows and columns in source excel file
+numberOfRowsICD_10MappingsWorkBook = ICD_10MappingsPathWorkSheet.max_row
+numberOfRowsicd_9UpdateForRMA2006PathWorkSheet = icd_9UpdateForRMA2006PathWorkSheet.max_column
+
+# Assigning first row
+
+icd_9UpdateForRMA2006PathWorkSheet['A1'] = 'ICD-9'
+icd_9UpdateForRMA2006PathWorkSheet['B1'] = 'HCC'
+icd_9UpdateForRMA2006PathWorkSheet['C1'] = 'RXHCC'
+icd_9UpdateForRMA2006PathWorkSheet['D1'] = 'HCC_Start'
+icd_9UpdateForRMA2006PathWorkSheet['E1'] = 'HCC_End'
+icd_9UpdateForRMA2006PathWorkSheet['F1'] = 'RXHCC_Start'
+icd_9UpdateForRMA2006PathWorkSheet['G1'] = 'RXHCC_End'
+
+
+# Copying cell values from source excel file to destination excel file and adding effective end and start dates
+# for i in range(2, numberOfRowsICD_10MappingsWorkBook):
+i = 1
+j = 1
+
+while i < numberOfRowsICD_10MappingsWorkBook:
+    i = i + 1
+    j = j + 1
+
+    # icd_9UpdateForRMA2006PathWorkSheet.cell(row=i, column=1).value = c.value  # + '_10'
+
+    c1 = ICD_10MappingsPathWorkSheet.cell(row=i, column=4)
+    d = ICD_10MappingsPathWorkSheet.cell(row=i, column=5)
+
+    print(c1.value != d.value)
+
+    if c1.value != d.value:
+        c = ICD_10MappingsPathWorkSheet.cell(row=i, column=1)
+        icd_9UpdateForRMA2006PathWorkSheet['A' + str(j)] = c.value
+
+        d = ICD_10MappingsPathWorkSheet.cell(row=i, column=4)
+        icd_9UpdateForRMA2006PathWorkSheet['B' + str(j)] = d.value
+
+        e = ICD_10MappingsPathWorkSheet.cell(row=i, column=6)
+        icd_9UpdateForRMA2006PathWorkSheet['C' + str(j)] = e.value
+
+        comparisonCell1 = str(ICD_10MappingsPathWorkSheet.cell(row=i, column=9).value)
+        if comparisonCell1.lower() == "yes":
+            cellA = icd_9UpdateForRMA2006PathWorkSheet.cell(row=j, column=4)
+            cellA.value = 'date1'
+            cellB = icd_9UpdateForRMA2006PathWorkSheet.cell(row=j, column=5)
+            cellB.value = 'date2'
+
+        comparisonCell2 = str(ICD_10MappingsPathWorkSheet.cell(row=i, column=10).value)
+        if comparisonCell2.lower() == "yes":
+            cellA = icd_9UpdateForRMA2006PathWorkSheet.cell(row=j, column=6)
+            cellA.value = 'date1'
+            cellB = icd_9UpdateForRMA2006PathWorkSheet.cell(row=j, column=7)
+            cellB.value = 'date2'
+
+        j = j + 1
+
+        c1 = ICD_10MappingsPathWorkSheet.cell(row=i, column=1)
+        icd_9UpdateForRMA2006PathWorkSheet['A' + str(j)] = c1.value
+
+        s = ICD_10MappingsPathWorkSheet.cell(row=i, column=5)
+        icd_9UpdateForRMA2006PathWorkSheet['B' + str(j)] = s.value
+
+        # icd_9UpdateForRMA2006PathWorkSheet.cell(row=j, column=2).value = s.value
+
+        r = ICD_10MappingsPathWorkSheet.cell(row=i, column=6)
+        icd_9UpdateForRMA2006PathWorkSheet['C' + str(j)] = r.value
+
+        comparisonCell4 = str(ICD_10MappingsPathWorkSheet.cell(row=i, column=9).value)
+        if comparisonCell4.lower() == "yes":
+            cellA = icd_9UpdateForRMA2006PathWorkSheet.cell(row=j, column=4)
+            cellA.value = 'date1'
+            cellB = icd_9UpdateForRMA2006PathWorkSheet.cell(row=j, column=5)
+            cellB.value = 'date2'
+
+        comparisonCell5 = str(ICD_10MappingsPathWorkSheet.cell(row=i, column=10).value)
+        if comparisonCell5.lower() == "yes":
+            cellA = icd_9UpdateForRMA2006PathWorkSheet.cell(row=j, column=6)
+            cellA.value = 'date1'
+            cellB = icd_9UpdateForRMA2006PathWorkSheet.cell(row=j, column=7)
+            cellB.value = 'date2'
+
+
+
+    else:
+        h = ICD_10MappingsPathWorkSheet.cell(row=i, column=1)
+        value2 = icd_9UpdateForRMA2006PathWorkSheet.cell(row=j, column=1).value = h.value
+        k = ICD_10MappingsPathWorkSheet.cell(row=i, column=1)
+        icd_9UpdateForRMA2006PathWorkSheet.cell(row=j, column=1).value = k.value
+
+        d = ICD_10MappingsPathWorkSheet.cell(row=i, column=5)
+        icd_9UpdateForRMA2006PathWorkSheet.cell(row=j, column=2).value = d.value
+
+        e = ICD_10MappingsPathWorkSheet.cell(row=i, column=6)
+        icd_9UpdateForRMA2006PathWorkSheet.cell(row=j, column=3).value = e.value
+
+        comparisonCell1 = str(ICD_10MappingsPathWorkSheet.cell(row=i, column=9).value)
+        if comparisonCell1.lower() == "yes":
+            cellA = icd_9UpdateForRMA2006PathWorkSheet.cell(row=j, column=4)
+            cellA.value = 'date1'
+            cellB = icd_9UpdateForRMA2006PathWorkSheet.cell(row=j, column=5)
+            cellB.value = 'date2'
+
+        comparisonCell1 = str(ICD_10MappingsPathWorkSheet.cell(row=i, column=10).value)
+        if comparisonCell1.lower() == "yes":
+            cellA = icd_9UpdateForRMA2006PathWorkSheet.cell(row=j, column=6)
+            cellA.value = 'date1'
+            cellB = icd_9UpdateForRMA2006PathWorkSheet.cell(row=j, column=7)
+            cellB.value = 'date2'
+            #cellB = icd_9UpdateForRMA2006PathWorkSheet.cell(row=j, column=5)
+           # cellB.value = '9/31/2021'
+
+numberOfRowsicd_9UpdateForRMA2006PathWorkSheet = icd_9UpdateForRMA2006PathWorkSheet.max_row + 1
+numberOfColumnsicd_9UpdateForRMA2006PathWorkSheet = icd_9UpdateForRMA2006PathWorkSheet.max_column
+
+
+print('done with first part')
+
+numberOfRowsicd_9UpdateForRMA2006PathWorkSheet = icd_9UpdateForRMA2006PathWorkSheet.max_row
+numberOfColumnsicd_9UpdateForRMA2006PathWorkSheet = icd_9UpdateForRMA2006PathWorkSheet.max_column
+
+icd_9UpdateForRMA2006PathWorkSheet['A' + str(numberOfRowsicd_9UpdateForRMA2006PathWorkSheet + 1)] = 'Begin Delete'
+
+icd_9UpdateForRMA2006WorkBook.save(str(destinationFileName))
+
+df1 = pd.read_excel('C:\\Users\\Mary\\Documents\\ICD_9 With Real Data trimmed\\Original Files\\ICD_9 New Spreadsheet.xlsx')
+df2 = pd.read_excel('C:\\Users\\Mary\\Documents\\ICD_9 With Real Data trimmed\\Original Files\\New RMA_2006 Medicare.xlsx')
+AddDeletes = pd.ExcelWriter('C:\\Users\\Mary\\Documents\\ICD_9 With Real Data trimmed\\Original Files\\AddsDeletes2.xlsx')
+
+duplicates_kept = pd.concat([df1,df2]).drop_duplicates(keep=False)
+length = len(duplicates_kept)
+print(length)
+print(duplicates_kept)
+
+# write dataframe to excel
+duplicates_kept.to_excel(AddDeletes)
+
+AddDeletes.save()
+
