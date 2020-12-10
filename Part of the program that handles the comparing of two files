@@ -1,0 +1,26 @@
+numberOfRowsicd_9UpdateForRMA2006PathWorkSheet = icd_9UpdateForRMA2006PathWorkSheet.max_row + 1
+numberOfColumnsicd_9UpdateForRMA2006PathWorkSheet = icd_9UpdateForRMA2006PathWorkSheet.max_column
+
+
+print('done with first part')
+
+numberOfRowsicd_9UpdateForRMA2006PathWorkSheet = icd_9UpdateForRMA2006PathWorkSheet.max_row
+numberOfColumnsicd_9UpdateForRMA2006PathWorkSheet = icd_9UpdateForRMA2006PathWorkSheet.max_column
+
+icd_9UpdateForRMA2006PathWorkSheet['A' + str(numberOfRowsicd_9UpdateForRMA2006PathWorkSheet + 1)] = 'Begin Delete'
+
+icd_9UpdateForRMA2006WorkBook.save(str(destinationFileName))
+
+df1 = pd.read_excel('C:\\Users\\Mary\\Documents\\risk model update\\new ICD9 RMA2006.xlsx')
+df2 = pd.read_excel('C:\\Users\\Mary\\Documents\\risk model update\\Risk Model Test.xlsx')
+AddDeletes = pd.ExcelWriter('C:\\Users\\Mary\\Documents\\risk model update\\Add Delete.xlsx')
+
+duplicates_kept = pd.concat([df1,df2]).drop_duplicates(keep=False)
+length = len(duplicates_kept)
+print(length)
+print(duplicates_kept)
+
+# write dataframe to excel
+duplicates_kept.to_excel(AddDeletes)
+
+AddDeletes.save()
