@@ -1,0 +1,215 @@
+import openpyxl
+import pandas as pd
+import numpy as np
+
+
+# Create a function that tests if the cell is empty
+
+def empty(val):
+    isEmpty = False
+    s = str(val)
+    try:
+        if not s:
+            isEmpty = True
+    except ValueError:
+        pass
+    return isEmpty
+
+# Open the source ICD-10-CM Mappings file
+
+sourceFileName = 'C:\\Users\\Mary\\Documents\\risk model update\\ICD-10 Input.xlsx'
+sourceFileWorkBook = openpyxl.load_workbook(sourceFileName)
+sourceFileWorkSheet = sourceFileWorkBook.worksheets[0]
+
+
+# Open the destination RMA_HCC2006 excel file
+
+destinationFileName = 'C:\\Users\\Mary\\Documents\\risk model update\\ICD-9 Output.xlsx'
+destinationFileWorkBook = openpyxl.load_workbook(destinationFileName)
+destinationFileWorkSheet = destinationFileWorkBook.active
+
+# assign the path to the RMA_HCC2006 file to be compared against
+comparisonFileName = 'C:\\Users\\Mary\\Documents\\risk model update\\xlsx Final ICD-9 RMA2006.xlsx'
+
+# assign the path to the file to contain added, deleted, and updated records
+addDeleteUpdateFileName = 'C:\\Users\\Mary\\Documents\\risk model update\\Add Delete.xlsx'
+
+
+# Create function to check if effective starts and end dates need to be added for HCCs and RxHCCs by
+# checking for Yes in Model Category V22 for 2021 Payment Year" or	"CMS-HCC Model Category V24 for 2021 Payment Year"
+# and "RxHCC Model for 2021 Payment Year"
+
+# Assigning first row
+
+destinationFileWorkSheet['A1'] = 'ICD-9'
+destinationFileWorkSheet['B1'] = 'HCC'
+destinationFileWorkSheet['C1'] = 'RXCC'
+destinationFileWorkSheet['D1'] = 'HCC_Start'
+destinationFileWorkSheet['E1'] = 'HCC_End'
+destinationFileWorkSheet['F1'] = 'RXHCC_Start'
+destinationFileWorkSheet['G1'] = 'RXHCC_End'
+destinationFileWorkSheet['H1'] = 'ESRD_PACE_HCC'
+destinationFileWorkSheet['I1'] = 'ESRD_PACE_HCC_Start'
+destinationFileWorkSheet['K1'] = 'ESRD_PACE_HCC_END'
+destinationFileWorkSheet['L1'] = 'MCE_Sex_Condition'
+destinationFileWorkSheet['M1'] = 'AGE_LAST'
+destinationFileWorkSheet['N1'] = 'CC_Sex_Split'
+destinationFileWorkSheet['O1'] = 'AdditionalCC'
+destinationFileWorkSheet['P1'] = 'Additionalcc_Start'
+destinationFileWorkSheet['Q1'] = 'AdditionalCC_End'
+destinationFileWorkSheet['R1'] = 'CommercialHCC'
+
+# Copying cell values from source excel file to destination excel file and adding effective end and start dates
+i = 2 #i increment starting at two to skip the first row
+j = 2 #j used to increment when an ICD-10 code needs to be duplicated
+
+while i <= sourceFileWorkSheet.max_row:
+    #Assign diagnosisCode to the value in source file column 1 (Diagnosis Code) in the current row
+    diagnosisCode = sourceFileWorkSheet.cell(row=i, column=1)
+
+    # Assign v22Value to the value in source file column 4 (CMS-HCC Model Category V22) in the current row
+    v22Value = sourceFileWorkSheet.cell(row=i, column=4)
+
+    # Assign v24Value to the value in source file column 5 (CMS-HCC Model Category V24) in the current row
+    v24Value = sourceFileWorkSheet.cell(row=i, column=5)
+
+    # Assign RxHCCValue to the value in source file column 6 (RxHCC Model Category V05) in the current row
+    RxHCCValue = sourceFileWorkSheet.cell(row=i, column=6)
+
+    #If v22Value and V24Value and RxHCCValue have no values then do not populate the row in the destination file
+    if empty(v22Value.value) and empty(v24Value.value) and empty(RxHCCValue.value):
+        print("Row " + str(i) + " " + diagnosisCode.value + " v22Value: empty  v24Value empty   RxHCCValue empty")
+
+    #else if v22Value and v24Value have no data and RxHCCValue has a value
+        #Populate Column A in the current row (ICD_9) in the destination file with diagnosisCode
+        #Populate Column B in the current row (HCC) in destination file with an empty string
+        #Populate Column C in the current row (RXHCC) in the destination file with RxHCCValue
+    elif empty(v22Value.value) and empty(v24Value.value) and (not empty(RxHCCValue.value)):
+        print("Row " + str(i) + " " + diagnosisCode.value + " v22Value: empty  v24Value empty   RxHCCValue not empty")
+        destinationFileWorkSheet['A' + str(j)] = diagnosisCode.value # Set ICD_9 in the output file
+        destinationFileWorkSheet['B' + str(j)] = "" # Set HCC in the output file
+        destinationFileWorkSheet['C' + str(j)] = RxHCCValue.value
+        j = j + 1
+
+    # else if v22Value has a value and v24Value does not have a value
+        # Populate Column A in the current row (ICD_9) in the destination file with diagnosisCode
+        # Populate Column B in the current row (HCC) in destination file with v22Value
+        # Populate Column C in the current row (RXHCC) in the destination file with RxHCCValue
+    elif (not empty(v22Value.value)) and empty(v24Value.value):
+        print("Row " + str(i) +  " " + diagnosisCode.value + " v22Value: not empty  v24Value empty")
+        destinationFileWorkSheet['A' + str(j)] = diagnosisCode.value # Set ICD_9 in the output file
+        destinationFileWorkSheet['B' + str(j)] = v22Value.value # Set HCC in the output file
+        destinationFileWorkSheet['C' + str(j)] = RxHCCValue.value # Set RXHCC in the output file
+
+        #
+        # Example Code that needs to be tested
+        # addEffectiveEndStart(i, j)
+        j = j + 1
+
+    # else if v22Value has no value and v24Value has a value
+        # Populate Column A in the current row (ICD_9) in the destination file with diagnosisCode
+        # Populate Column B in the current row (HCC) in destination file with v24Value
+        # Populate Column C in the current row (RXHCC) in the destination file with RxHCCValue
+    elif empty(v22Value.value) and (not empty(v24Value.value)):
+        print("Row " + str(i) +  " " + diagnosisCode.value + " v22Value: not empty  v24Value empty")
+        destinationFileWorkSheet['A' + str(j)] = diagnosisCode.value # Set ICD_9 in the output file
+        destinationFileWorkSheet['B' + str(j)] = v24Value.value # Set HCC in the output file
+        destinationFileWorkSheet['C' + str(j)] = RxHCCValue.value # Set RXHCC in the output file
+        # Example Code that needs to be tested
+        # addEffectiveEndStart(i, j)
+        j = j + 1
+
+    # else if v22Value and v24Value have values and are equal
+        # Populate Column A in the current row (ICD-10) with diagnosisCode
+        # Populate Column B in the current row (HCC) with v22Value
+        # Populate Column C in the current row (RxHCC) with RxHCCValue
+    elif v22Value.value == v24Value.value:
+        print("Row " + str(i) +  " " + diagnosisCode.value + " v22Value == v24Value")
+        destinationFileWorkSheet['A' + str(j)] = diagnosisCode.value # Set ICD_9 in the output file
+        destinationFileWorkSheet['B' + str(j)] = v22Value.value # Set HCC in the output file
+        destinationFileWorkSheet['C' + str(j)] = RxHCCValue.value # Set RXHCC in the output file
+        # Example Code that needs to be tested
+        # addEffectiveEndStart(i, j)
+        j = j + 1
+
+        # else v22Value and v24Value are different create two rows
+    else:
+        # Current row
+            # Populate Column A in current row (ICD-10) with diagnosisCode
+            # Populate Column B in current row (HCC) with v22Value
+            # Populate Column C in current row (RxHCC) with RxHCCValue
+        print("Row " + str(i) +  " " + diagnosisCode.value + " v22Value != v24Value")
+        destinationFileWorkSheet['A' + str(j)] = diagnosisCode.value # Set ICD_9 in the output file
+        destinationFileWorkSheet['B' + str(j)] = v22Value.value # Set HCC in the output file
+        destinationFileWorkSheet['C' + str(j)] = RxHCCValue.value # Set RXHCC in the output file
+
+        # Next row
+            # Populate Column A in current row (ICD-10) with diagnosisCode
+            # Populate Column B in current row (HCC) with v24Value
+            # Populate Column C in current row (RxHCC) with RxHCCValue
+        j = j + 1
+        destinationFileWorkSheet['A' + str(j)] = diagnosisCode.value # Set ICD_9 in the output file
+        destinationFileWorkSheet['B' + str(j)] = v24Value.value # Set HCC in the output file
+        j = j + 1
+    i = i + 1
+
+
+numberOfRowsDestinationFileWorkSheetWorkSheet = destinationFileWorkSheet.max_row
+
+for i in range(2, numberOfRowsDestinationFileWorkSheetWorkSheet):
+    #Populate Column 8 (ESRD_PACE_HCC) in current row with NULL
+    destinationFileWorkSheet.cell(row=i, column=8).value = 'NULL'
+
+    #Populate Column 9 (ESRD_PACE_HCC_START) in current row with NULL
+    destinationFileWorkSheet.cell(row=i, column=9).value = 'NULL'
+
+    #Populate Column 10 (ESRD_PACE_HCC_END) in current row with NULL
+    destinationFileWorkSheet.cell(row=i, column=10).value = 'NULL'
+
+    #Populate Column 11 (AGE_AT_DIAGNOSIS) in current row with NULL
+    destinationFileWorkSheet.cell(row=i, column=11).value = 'NULL'
+
+    #Populate Column 12 (MCE_Sex_Condition) in current row with NULL
+    destinationFileWorkSheet.cell(row=i, column=12).value = 'NULL'
+
+    #Populate Column 13 (AGE_LAST) in current row with NULL
+    destinationFileWorkSheet.cell(row=i, column=13).value = 'NULL'
+
+    #Populate Column 14 (CC_Sex_Split) in current row with NULL
+    destinationFileWorkSheet.cell(row=i, column=14).value = 'NULL'
+
+    #Populate Column 15 (AdditionalCC) in current row with NULL
+    destinationFileWorkSheet.cell(row=i, column=15).value = 'NULL'
+
+    #Populate Column 16 (AdditionalCC_Start) in current row with NULL
+    destinationFileWorkSheet.cell(row=i, column=16).value = 'NULL'
+
+    #Populate Column 17 (AdditionalCC_End) in current row with NULL
+    destinationFileWorkSheet.cell(row=i, column=17).value = 'NULL'
+
+    #Populate Column 18 (CommercialHCC) in current row with 0
+    destinationFileWorkSheet.cell(row=i, column=18).value = 0
+
+# Save the destinationFileWorkBook
+destinationFileWorkBook.save(str(destinationFileName))
+
+# Open the ICD-10 file just saved to be read
+df1 = pd.read_excel(destinationFileName)
+
+# Open the ICD-10 file to compare against to be read.
+# Note: these files must be in the exact format as the destination file
+df2 = pd.read_excel(comparisonFileName)
+
+# Open the file that will hold added, updated, and deleted records to be read
+addUpdatesDeletes = pd.ExcelWriter(addDeleteUpdateFileName)
+
+# Compare the ICD-10 file created above to the file to be compared against
+# Note: the drop_duplicates(keep=False) will find all discrepancies in the two files. To differentiate between adds
+# updates, and deletes more code will need to be written
+
+duplicates_kept = pd.concat([df1,df2]).drop_duplicates(keep=False)
+
+# Write to excel records to be added, updated, or deleted.
+duplicates_kept.to_excel(addUpdatesDeletes)
+
+addUpdatesDeletes.save()
