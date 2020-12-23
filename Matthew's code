@@ -1,0 +1,117 @@
+import openpyxl
+import pandas as pd
+import numpy as np
+
+
+def empty(val):
+    isEmpty = False
+    s = str(val)
+    try:
+        if not s:
+            isEmpty = True
+    except ValueError:
+        pass
+    return isEmpty
+# Opening the source excel files
+
+sourceFileName = 'C:\\Users\\Mary\\Documents\\risk model update\\ICD-10 Input.xlsx'
+sourceFileWorkBook = openpyxl.load_workbook(sourceFileName)
+sourceFileWorkSheet = sourceFileWorkBook.worksheets[0]
+
+# sourceFileName2 = 'C:\\Users\\Mary\\Documents\\ICD9\\2021 Midyear Updates RMA2006.xlsx'
+# ICD_10MappingsWorkBook = openpyxl.load_workbook(sourceFileName2)
+# ICD_10MappingsPathWorkSheet = ICD_10MappingsWorkBook.worksheets[0]
+
+# Opening the destination excel file
+
+destinationFileName = 'C:\\Users\\Mary\\Documents\\risk model update\\ICD-9 Output.xlsx'
+destinationFileWorkBook = openpyxl.load_workbook(destinationFileName)
+destinationFileWorkSheet = destinationFileWorkBook.active
+
+# calculate total number of rows and columns in source excel file
+#numberOfRowsICD_10MappingsWorkBook = sourceFileWorkSheet.max_row
+#numberOfRowsicd_9UpdateForRMA2006PathWorkSheet = icd_9UpdateForRMA2006PathWorkSheet.max_column
+
+# Assigning first row
+destinationFileWorkSheet['A1'] = 'ICD-9'
+destinationFileWorkSheet['B1'] = 'HCC'
+destinationFileWorkSheet['C1'] = 'RXHCC'
+
+# Copying cell values from source excel file to destination excel file and adding effective end and start dates
+# for i in range(2, numberOfRowsICD_10MappingsWorkBook):
+i = 2 #1
+j = 2
+
+while i <= sourceFileWorkSheet.max_row:
+#    i = i + 1
+    diagnosisCode = sourceFileWorkSheet.cell(row=i, column=1) # Diagnosis Code in the input file
+    v22Value = sourceFileWorkSheet.cell(row=i, column=4)
+    v24Value = sourceFileWorkSheet.cell(row=i, column=5)
+    RxHCCValue = sourceFileWorkSheet.cell(row=i, column=6)
+
+    if empty(v22Value.value) and empty(v24Value.value) and empty(RxHCCValue.value):
+        print("Row " + str(i) + " " + diagnosisCode.value + " v22Value: empty  v24Value empty   RxHCCValue empty")
+    elif empty(v22Value.value) and empty(v24Value.value) and (not empty(RxHCCValue.value)):
+        print("Row " + str(i) +  " " + diagnosisCode.value + " v22Value: empty  v24Value empty   RxHCCValue not empty")
+        destinationFileWorkSheet['A' + str(j)] = diagnosisCode.value # Set ICD_9 in the output file
+        destinationFileWorkSheet['B' + str(j)] = "" # Set HCC in the output file
+        destinationFileWorkSheet['C' + str(j)] = RxHCCValue.value
+        j = j + 1
+    elif (not empty(v22Value.value)) and empty(v24Value.value):
+        print("Row " + str(i) +  " " + diagnosisCode.value + " v22Value: not empty  v24Value empty")
+        destinationFileWorkSheet['A' + str(j)] = diagnosisCode.value # Set ICD_9 in the output file
+        destinationFileWorkSheet['B' + str(j)] = v22Value.value # Set HCC in the output file
+        destinationFileWorkSheet['C' + str(j)] = RxHCCValue.value # Set RXHCC in the output file
+        j = j + 1
+    elif empty(v22Value.value) and (not empty(v24Value.value)):
+        print("Row " + str(i) +  " " + diagnosisCode.value + " v22Value: not empty  v24Value empty")
+        destinationFileWorkSheet['A' + str(j)] = diagnosisCode.value # Set ICD_9 in the output file
+        destinationFileWorkSheet['B' + str(j)] = v24Value.value # Set HCC in the output file
+        destinationFileWorkSheet['C' + str(j)] = RxHCCValue.value # Set RXHCC in the output file
+        j = j + 1
+    elif v22Value.value == v24Value.value:
+        print("Row " + str(i) +  " " + diagnosisCode.value + " v22Value == v24Value")
+        destinationFileWorkSheet['A' + str(j)] = diagnosisCode.value # Set ICD_9 in the output file
+        destinationFileWorkSheet['B' + str(j)] = v22Value.value # Set HCC in the output file
+        destinationFileWorkSheet['C' + str(j)] = RxHCCValue.value # Set RXHCC in the output file
+        j = j + 1
+    else:
+        print("Row " + str(i) +  " " + diagnosisCode.value + " v22Value != v24Value")
+        destinationFileWorkSheet['A' + str(j)] = diagnosisCode.value # Set ICD_9 in the output file
+        destinationFileWorkSheet['B' + str(j)] = v22Value.value # Set HCC in the output file
+        destinationFileWorkSheet['C' + str(j)] = RxHCCValue.value # Set RXHCC in the output file
+        j = j + 1
+        destinationFileWorkSheet['A' + str(j)] = diagnosisCode.value # Set ICD_9 in the output file
+        destinationFileWorkSheet['B' + str(j)] = v24Value.value # Set HCC in the output file
+        j = j + 1
+    i = i + 1
+
+
+
+#numberOfRowsicd_9UpdateForRMA2006PathWorkSheet = icd_9UpdateForRMA2006PathWorkSheet.max_row + 1
+#numberOfColumnsicd_9UpdateForRMA2006PathWorkSheet = icd_9UpdateForRMA2006PathWorkSheet.max_column
+
+
+print('done with first part')
+
+#numberOfRowsicd_9UpdateForRMA2006PathWorkSheet = icd_9UpdateForRMA2006PathWorkSheet.max_row
+#numberOfColumnsicd_9UpdateForRMA2006PathWorkSheet = icd_9UpdateForRMA2006PathWorkSheet.max_column
+
+#icd_9UpdateForRMA2006PathWorkSheet['A' + str(numberOfRowsicd_9UpdateForRMA2006PathWorkSheet + 1)] = 'Begin Delete'
+destinationFileWorkBook.save(str(destinationFileName))
+
+df1 = pd.read_excel('C:\\Users\\Mary\\Documents\\risk model update\\ICD-9 Output.xlsx')
+df2 = pd.read_excel('C:\\Users\\Mary\\Documents\\risk model update\\xlsx Final ICD-9 RMA2006.xlsx')
+AddDeletes = pd.ExcelWriter('C:\\Users\\Mary\\Documents\\risk model update\\Add Delete.xlsx')
+
+duplicates_kept = pd.concat([df1,df2]).drop_duplicates(keep=False)
+length = len(duplicates_kept)
+print(length)
+print(duplicates_kept)
+
+# write dataframe to excel
+duplicates_kept.to_excel(AddDeletes)
+
+AddDeletes.save()
+
+
