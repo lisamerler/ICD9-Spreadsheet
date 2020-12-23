@@ -1,0 +1,159 @@
+Open the source ICD-10-CM Mappings file
+
+Open the destination RMA_HCC2006 excel file
+
+Assign the path to the RMA_HCC2006 file to be compared against
+
+Assign the path to the file to contain added, deleted, and updated records
+
+
+Create function to check if effective starts and end dates need to be added for HCCs and RxHCCs by
+checking for Yes in Model Category V22 for 2021 Payment Year" or	"CMS-HCC Model Category V24 for 2021 Payment Year"
+and "RxHCC Model for 2021 Payment Year"
+
+Create a function that tests if the cell is empty
+
+Assigning first row
+
+['A1'] = 'ICD-9'
+['B1'] = 'HCC'
+['C1'] = 'RXCC'
+['D1'] = 'HCC_Start'
+['E1'] = 'HCC_End'
+['F1'] = 'RXHCC_Start'
+['G1'] = 'RXHCC_End'
+['H1'] = 'ESRD_PACE_HCC'
+['I1'] = 'ESRD_PACE_HCC_Start'
+['K1'] = 'ESRD_PACE_HCC_END'
+['L1'] = 'MCE_Sex_Condition'
+['M1'] = 'AGE_LAST'
+['N1'] = 'CC_Sex_Split'
+['O1'] = 'AdditionalCC'
+['P1'] = 'Additionalcc_Start'
+['Q1'] = 'AdditionalCC_End'
+['R1'] = 'CommercialHCC'
+
+
+i = 2 #i index for the source file note: index starting at two to skip the first row
+j = 2 #j index for the destination file note: starting at two to increment at two to skip the first row for inde
+
+while i is less than the number of rows in the source file
+    
+    Assign diagnosisCode to the value in source file column 1 (Diagnosis Code) in the current row
+    Assign v22Value to the value in source file column 4 (CMS-HCC Model Category V22) in the current row
+    Assign v24Value to the value in source file column 5 (CMS-HCC Model Category V24) in the current row
+    Assign RxHCCValue to the value in source file column 6 (RxHCC Model Category V05) in the current row
+
+    If v22Value and V24Value and RxHCCValue have no values then do not populate the row in the destination file
+
+    else if v22Value and v24Value have no data and RxHCCValue has a value
+        Populate Column A in the current row (ICD_9) in the destination file with diagnosisCode
+        Populate Column B in the current row (HCC) in destination file with an empty string
+        Populate Column C in the current row (RXHCC) in the destination file with RxHCCValue
+        j = j + 1
+
+    else if v22Value has a value and v24Value does not have a value
+        Populate Column A in the current row (ICD_9) in the destination file with diagnosisCode  
+        Populate Column B in the current row (HCC) in destination file with v22Value
+        Populate Column C in the current row (RXHCC) in the destination file with RxHCCValue
+        
+        add effective start date to Column D HCC_Start
+        add effective end date to Column E (HCC_End)
+        
+        add effective start date to Column F RXHCC_Start
+        add effective end date to Column G RXHCC_end
+        
+        j = j + 1
+
+    else if v22Value has no value and v24Value has a value
+        Populate Column A in the current row (ICD_9) in the destination file with diagnosisCode
+        Populate Column B in the current row (HCC) in destination file with v24Value
+        Populate Column C in the current row (RXHCC) in the destination file with RxHCCValue
+        
+        add effective start date to Column D HCC_Start
+        add effective end date to Column E (HCC_End)
+        
+        add effective start date to Column F RXHCC_Start
+        add effective end date to Column G RXHCC_end
+   
+    else if v22Value and v24Value have values and are equal
+        Populate Column A in the current row (ICD-10) with diagnosisCode
+        Populate Column B in the current row (HCC) with v22Value
+        Populate Column C in the current row (RxHCC) with RxHCCValue
+        
+        add effective start date to Column D HCC_Start
+        add effective end date to Column E (HCC_End)
+        
+        add effective start date to Column F RXHCC_Start
+        add effective end date to Column G RXHCC_end
+        
+    else v22Value and v24Value are different create two rows
+        Current row
+            Populate Column A in current row (ICD-10) with diagnosisCode
+            Populate Column B in current row (HCC) with v22Value
+            Populate Column C in current row (RxHCC) with RxHCCValue
+
+            add effective start date to Column D HCC_Start
+            add effective end date to Column E (HCC_End)
+        
+            add effective start date to Column F RXHCC_Start
+            add effective end date to Column G RXHCC_end
+
+        Next row
+            Populate Column A in current row (ICD-10) with diagnosisCode
+            Populate Column B in current row (HCC) with v24Value
+            Populate Column C in current row (RxHCC) with RxHCCValue
+            
+            add effective start date to Column D HCC_Start
+            add effective end date to Column E (HCC_End)
+        
+            add effective start date to Column F RXHCC_Start
+            add effective end date to Column G RXHCC_end
+            
+            j = j + 1
+
+        j = j + 1
+    
+    i = i + 1
+
+
+numberOfRowsDestinationFileWorkSheetWorkSheet = destinationFileWorkSheet.max_row
+
+for i in range(2, numberOfRowsDestinationFileWorkSheetWorkSheet):
+    Populate destination file Column 8 (ESRD_PACE_HCC) in current row with NULL
+    Populate destination file Column 9 (ESRD_PACE_HCC_START) in current row with NULL
+    Populate destination file Column 10 (ESRD_PACE_HCC_END) in current row with NULL
+    Populate destination file Column 11 (AGE_AT_DIAGNOSIS) in current row with NULL
+    Populate destination file Column 12 (MCE_Sex_Condition) in current row with NULL
+    Populate destination file Column 13 (AGE_LAST) in current row with NULL
+    Populate destination file Column 14 (CC_Sex_Split) in current row with NULL
+    Populate destination file Column 15 (AdditionalCC) in current row with NULL
+    Populate destination file Column 16 (AdditionalCC_Start) in current row with NULL
+    Populate destination file Column 17 (AdditionalCC_End) in current row with NULL
+    Populate destination file Column 18 (CommercialHCC) in current row with 0
+    
+    
+Save the destinationFileWorkBook
+
+Note: pd in examples are for pandas in python
+
+Open the ICD-10 file just saved to be read
+example: df1 = pd.read_excel(destinationFileName)
+
+Open the ICD-10 file to compare against to be read.
+Note: these files must be in the exact format as the destination file
+example: df2 = pd.read_excel(comparisonFileName)
+
+Open the file that will hold added, updated, and deleted records to be read
+example: addUpdatesDeletes = pd.ExcelWriter(addDeleteUpdateFileName)
+
+Compare the ICD-10 file created above to the file to be compared against
+Note: the drop_duplicates(keep=False) will find all discrepancies in the two files. To differentiate between adds
+updates, and deletes more code will need to be written
+example: duplicates_kept = pd.concat([df1,df2]).drop_duplicates(keep=False)
+
+Write to excel records to be added, updated, or deleted.
+example: duplicates_kept.to_excel(addUpdatesDeletes)
+
+Save file to contain added, deleted, and updated records
+example: addUpdatesDeletes.save()
