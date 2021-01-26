@@ -8,7 +8,7 @@ Assign the path to the file to contain added, deleted, and updated records
 
 
 Create function to check if effective starts and end dates need to be added for HCCs and RxHCCs by
-checking for Yes in Model Category V22 for 2021 Payment Year" or	"CMS-HCC Model Category V24 for 2021 Payment Year"
+checking for Yes in Model Category V22 for 2021 Payment Year" or "CMS-HCC Model Category V24 for 2021 Payment Year"
 and "RxHCC Model for 2021 Payment Year"
 
 Create a function that tests if the cell is empty
@@ -35,7 +35,7 @@ Assigning first row
 
 
 i = 2 #i index for the source file note: index starting at two to skip the first row
-j = 2 #j index for the destination file note: starting at two to increment at two to skip the first row for inde
+j = 2 #j index for the destination file note: starting at two to increment at two to skip the first row
 
 while i is less than the number of rows in the source file
     
@@ -50,7 +50,11 @@ while i is less than the number of rows in the source file
         Populate Column A in the current row (ICD_9) in the destination file with diagnosisCode
         Populate Column B in the current row (HCC) in destination file with an empty string
         Populate Column C in the current row (RXHCC) in the destination file with RxHCCValue
-        j = j + 1
+        
+        j = j + 1 (increment destination file index)
+        
+        add effective start date to Column F RXHCC_Start
+        add effective end date to Column G RXHCC_end
 
     else if v22Value has a value and v24Value does not have a value
         Populate Column A in the current row (ICD_9) in the destination file with diagnosisCode  
@@ -63,14 +67,14 @@ while i is less than the number of rows in the source file
         add effective start date to Column F RXHCC_Start
         add effective end date to Column G RXHCC_end
         
-        j = j + 1
+        j = j + 1 (increment destination file index)
 
     else if v22Value has no value and v24Value has a value
         Populate Column A in the current row (ICD_9) in the destination file with diagnosisCode
         Populate Column B in the current row (HCC) in destination file with v24Value
         Populate Column C in the current row (RXHCC) in the destination file with RxHCCValue
         
-        add effective start date to Column D HCC_Start
+        add effective start date to Column D (HCC_Start)
         add effective end date to Column E (HCC_End)
         
         add effective start date to Column F RXHCC_Start
@@ -87,7 +91,7 @@ while i is less than the number of rows in the source file
         add effective start date to Column F RXHCC_Start
         add effective end date to Column G RXHCC_end
         
-    else v22Value and v24Value are different create two rows
+    else v22Value and v24Value have values and are different create two rows
         Current row
             Populate Column A in current row (ICD-10) with diagnosisCode
             Populate Column B in current row (HCC) with v22Value
@@ -110,12 +114,13 @@ while i is less than the number of rows in the source file
             add effective start date to Column F RXHCC_Start
             add effective end date to Column G RXHCC_end
             
-            j = j + 1
+            j = j + 1 (increment destination file index here in this case when v22 and v24 have values and are not equal)
 
-        j = j + 1
+        j = j + 1 (increment destination file index)
     
-    i = i + 1
+    i = i + 1 (increment the source file index)
 
+end while
 
 numberOfRowsDestinationFileWorkSheetWorkSheet = destinationFileWorkSheet.max_row
 
