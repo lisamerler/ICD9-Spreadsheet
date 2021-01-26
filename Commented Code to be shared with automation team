@@ -78,56 +78,60 @@ while i <= sourceFileWorkSheet.max_row:
 
     #If v22Value and V24Value and RxHCCValue have no values then do not populate the row in the destination file
     if empty(v22Value.value) and empty(v24Value.value) and empty(RxHCCValue.value):
-        print("Row " + str(i) + " " + diagnosisCode.value + " v22Value: empty  v24Value empty   RxHCCValue empty")
+        # Do not write anything to the destinationFileWorkSheet/Do nothing (Python will require you to put some kind of statement in here 
+        # because doing "Nothing" in an if condition isn't available)
 
     #else if v22Value and v24Value have no data and RxHCCValue has a value
         #Populate Column A in the current row (ICD_9) in the destination file with diagnosisCode
         #Populate Column B in the current row (HCC) in destination file with an empty string
         #Populate Column C in the current row (RXHCC) in the destination file with RxHCCValue
+        
     elif empty(v22Value.value) and empty(v24Value.value) and (not empty(RxHCCValue.value)):
-        print("Row " + str(i) + " " + diagnosisCode.value + " v22Value: empty  v24Value empty   RxHCCValue not empty")
         destinationFileWorkSheet['A' + str(j)] = diagnosisCode.value # Set ICD_9 in the output file
         destinationFileWorkSheet['B' + str(j)] = "" # Set HCC in the output file
-        destinationFileWorkSheet['C' + str(j)] = RxHCCValue.value
+        destinationFileWorkSheet['C' + str(j)] = RxHCCValue.value # Set RxHCC in the output file
         j = j + 1
 
     # else if v22Value has a value and v24Value does not have a value
         # Populate Column A in the current row (ICD_9) in the destination file with diagnosisCode
         # Populate Column B in the current row (HCC) in destination file with v22Value
         # Populate Column C in the current row (RXHCC) in the destination file with RxHCCValue
+        
     elif (not empty(v22Value.value)) and empty(v24Value.value):
-        print("Row " + str(i) +  " " + diagnosisCode.value + " v22Value: not empty  v24Value empty")
         destinationFileWorkSheet['A' + str(j)] = diagnosisCode.value # Set ICD_9 in the output file
         destinationFileWorkSheet['B' + str(j)] = v22Value.value # Set HCC in the output file
         destinationFileWorkSheet['C' + str(j)] = RxHCCValue.value # Set RXHCC in the output file
 
-        #
         # Example Code that needs to be tested
         # addEffectiveEndStart(i, j)
+        
         j = j + 1
 
     # else if v22Value has no value and v24Value has a value
         # Populate Column A in the current row (ICD_9) in the destination file with diagnosisCode
         # Populate Column B in the current row (HCC) in destination file with v24Value
         # Populate Column C in the current row (RXHCC) in the destination file with RxHCCValue
+        
     elif empty(v22Value.value) and (not empty(v24Value.value)):
-        print("Row " + str(i) +  " " + diagnosisCode.value + " v22Value: not empty  v24Value empty")
         destinationFileWorkSheet['A' + str(j)] = diagnosisCode.value # Set ICD_9 in the output file
         destinationFileWorkSheet['B' + str(j)] = v24Value.value # Set HCC in the output file
         destinationFileWorkSheet['C' + str(j)] = RxHCCValue.value # Set RXHCC in the output file
+        
         # Example Code that needs to be tested
         # addEffectiveEndStart(i, j)
+        
         j = j + 1
 
     # else if v22Value and v24Value have values and are equal
         # Populate Column A in the current row (ICD-10) with diagnosisCode
         # Populate Column B in the current row (HCC) with v22Value
         # Populate Column C in the current row (RxHCC) with RxHCCValue
+        
     elif v22Value.value == v24Value.value:
-        print("Row " + str(i) +  " " + diagnosisCode.value + " v22Value == v24Value")
         destinationFileWorkSheet['A' + str(j)] = diagnosisCode.value # Set ICD_9 in the output file
         destinationFileWorkSheet['B' + str(j)] = v22Value.value # Set HCC in the output file
         destinationFileWorkSheet['C' + str(j)] = RxHCCValue.value # Set RXHCC in the output file
+        
         # Example Code that needs to be tested
         # addEffectiveEndStart(i, j)
         j = j + 1
@@ -138,7 +142,7 @@ while i <= sourceFileWorkSheet.max_row:
             # Populate Column A in current row (ICD-10) with diagnosisCode
             # Populate Column B in current row (HCC) with v22Value
             # Populate Column C in current row (RxHCC) with RxHCCValue
-        print("Row " + str(i) +  " " + diagnosisCode.value + " v22Value != v24Value")
+            
         destinationFileWorkSheet['A' + str(j)] = diagnosisCode.value # Set ICD_9 in the output file
         destinationFileWorkSheet['B' + str(j)] = v22Value.value # Set HCC in the output file
         destinationFileWorkSheet['C' + str(j)] = RxHCCValue.value # Set RXHCC in the output file
@@ -147,14 +151,21 @@ while i <= sourceFileWorkSheet.max_row:
             # Populate Column A in current row (ICD-10) with diagnosisCode
             # Populate Column B in current row (HCC) with v24Value
             # Populate Column C in current row (RxHCC) with RxHCCValue
+        
         j = j + 1
         destinationFileWorkSheet['A' + str(j)] = diagnosisCode.value # Set ICD_9 in the output file
         destinationFileWorkSheet['B' + str(j)] = v24Value.value # Set HCC in the output file
+        
         j = j + 1
+        
     i = i + 1
 
 
 numberOfRowsDestinationFileWorkSheetWorkSheet = destinationFileWorkSheet.max_row
+
+# Populate these with NULL: ESRD_PACE_HCC,ESRD_PACE_HCC_START, ESRD_PACE_HCC_END, AGE_AT_DIAGNOSIS, MCE_Sex_Condition, AGE_LAST, CC_Sex_Split
+# AdditionalCC, AdditionalCC_Start, AdditionalCC_End
+# Populate CommercialHCC with 0
 
 for i in range(2, numberOfRowsDestinationFileWorkSheetWorkSheet):
     #Populate Column 8 (ESRD_PACE_HCC) in current row with NULL
